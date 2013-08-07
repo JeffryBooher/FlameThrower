@@ -364,13 +364,15 @@ define(function (require, exports, module) {
             return pumpKeystrokes(_getRandomInt(0, KEY_FAB_COUNTER), randomizeEnterKey);
         } else {
             console.log("Simulate injectingKeys...");
-            // close whatever box was up if any
-            simulateKeyEvent(KeyEvent.VK_ESCAPE);
-            if (!_okToRun) {
-                return (new $.Deferred()).reject().promise();
-            } else {
-                return (new $.Deferred()).resolve().promise();
-            }
+            setTimeout(function () {
+                // close whatever box was up if any
+                simulateKeyEvent(KeyEvent.VK_ESCAPE);
+                if (!_okToRun) {
+                    return (new $.Deferred()).reject().promise();
+                } else {
+                    return (new $.Deferred()).resolve().promise();
+                }
+            }, PAINT_CYCLE_MS);
         }
     }
 
