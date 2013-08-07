@@ -359,9 +359,9 @@ define(function (require, exports, module) {
         return result;
     }
 
-    function startTyping(randomizeEnterKey) {
+    function startTyping(randomizeEnterKey, maxKeys) {
         if (brackets.platform === "mac") {
-            return pumpKeystrokes(_getRandomInt(0, KEY_FAB_COUNTER), randomizeEnterKey);
+            return pumpKeystrokes(_getRandomInt(0, maxKeys || KEY_FAB_COUNTER), randomizeEnterKey);
         } else {
             var result = new $.Deferred();
             console.log("Simulate injectingKeys...");
@@ -378,12 +378,12 @@ define(function (require, exports, module) {
         }
     }
 
-    function execCommandAndStartTyping(commandId, randomizeEnterKey) {
+    function execCommandAndStartTyping(commandId, randomizeEnterKey, maxKeys) {
         // create a document and start typing
         var result = new $.Deferred();
 
         var handleCreate = function () {
-            startTyping(randomizeEnterKey)
+            startTyping(randomizeEnterKey, maxKeys)
                 .done(function () {
                     result.resolve();
                 })
@@ -405,11 +405,11 @@ define(function (require, exports, module) {
 
 
     function doQuickOpen() {
-        return execCommandAndStartTyping(Commands.NAVIGATE_QUICK_OPEN);
+        return execCommandAndStartTyping(Commands.NAVIGATE_QUICK_OPEN, false, 100);
     }
 
     function doFindInFiles() {
-        return execCommandAndStartTyping(Commands.EDIT_FIND_IN_FILES);
+        return execCommandAndStartTyping(Commands.EDIT_FIND_IN_FILES, false, 100);
     }
 
     function doNewDocument() {
