@@ -373,7 +373,7 @@ define(function (require, exports, module) {
                 } else {
                     return result.resolve();
                 }
-            }, PAINT_CYCLE_MS);
+            }, 20000);
             return result;
         }
     }
