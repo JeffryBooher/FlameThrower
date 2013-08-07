@@ -324,9 +324,7 @@ define(function (require, exports, module) {
 
     function simulateKeyEvent(charCode) {
         var evt = window.document.createEvent("KeyboardEvent");
-        (evt.initKeyEvent || evt.initKeyboardEvent)("keypress", true, true, window,
-                        0, 0, 0, 0,
-                        0, charCode);
+        evt.initKeyboardEven("keypress", true, true, window, 0, 0, 0, 0, 0, charCode);
         window.document.activeElement.dispatchEvent(evt);
     }
 
@@ -390,7 +388,7 @@ define(function (require, exports, module) {
             .done(function () {
                 setTimeout(handleCreate, PAINT_CYCLE_MS);
             })
-            .reject(function () {
+            .fail(function () {
                 result.reject();
             });
 

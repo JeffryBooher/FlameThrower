@@ -3,7 +3,7 @@
     "title": "FlameThrower Keyboard Sprayer",
     "description": "Pumps random characters into a Brackets",
     "homepage": "https://github.com/JeffryBooher/FlameThrower",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "author": "JeffryBooher",
     "license": "MIT",
     "engines": {
