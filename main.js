@@ -301,6 +301,8 @@ define(function (require, exports, module) {
     var alphaChars = vkAlpha.concat(vkNumeric);
     var printableChars = alphaChars.concat(vkSymbol);
 
+    var PAINT_CYCLE_MS = 1000;
+
     function _getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
@@ -317,7 +319,7 @@ define(function (require, exports, module) {
         };
 
         var typeOneChar = function () {
-            setTimeout(pumpNext, 100);
+            setTimeout(pumpNext, PAINT_CYCLE_MS);
         };
 
         for (i = 0; i < count; i++) {
@@ -333,7 +335,7 @@ define(function (require, exports, module) {
         // creaet a document
         // start pushing chars
         CommandManager.execute(Commands.FILE_NEW_UNTITLED);
-        setTimeout(startTyping, 10000);
+        setTimeout(startTyping, PAINT_CYCLE_MS);
     }
 
 
