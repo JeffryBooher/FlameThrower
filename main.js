@@ -451,13 +451,14 @@ define(function (require, exports, module) {
     }
 
     function throwFlames() {
-        _running = true;
-        _okToRun = false;
-        doCreateDocumentAndSpray().always(function () {
-            _running = false;
-            _okToRun = true;
-            alert("Flames have been extinguished");
-        });
+        if (!_running && _okToRun) {
+            _running = true;
+            doCreateDocumentAndSpray().always(function () {
+                _running = false;
+                _okToRun = true;
+                alert("Flames have been extinguished");
+            });
+        }
     }
 
     function extinguishFlames() {
