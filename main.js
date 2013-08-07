@@ -424,17 +424,23 @@ define(function (require, exports, module) {
         var result = new $.Deferred(),
             operations = [doQuickOpen, doFindInFiles]; //, doTypeInDocument];
 
-        var bail = function () {
-            result.reject();
+
+        var pumpNext = function () {
+            if (!_okToRun) {
+                result.reject();
+            } else {
+                operations[_getRandomInt(0, operations.length - 1)].call()
+                    .done(function () {
+                        pumpNext();
+                    })
+                    .fail(function () {
+                        result.reject();
+                    });
+            }
         };
 
-        while (true) {
-            operations[_getRandomInt(0, operations.length - 1)].call().fail(bail());
-        }
-
-
+        pumpNext();
         return result;
-
     }
 
     function doCreateDocumentAndSpray() {
