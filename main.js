@@ -316,20 +316,20 @@ define(function (require, exports, module) {
         }
     }
     
+    function startTyping() {
+        pumpKeystrokes(10000);
+    }
+    
     function throwFlames() {
         // creaet a document
         // start pushing chars
         CommandManager.execute(Commands.FILE_NEW_UNTITLED);
 
-        setTimeout(10, function () {
-            pumpKeystrokes(10000);
-        });
+        setTimeout(startTyping, 1000);
         
     }
                     
     
-    // Extension init code goes at the bottom
-    ExtensionUtils.loadStyleSheet(module, "styles/styles.css");
     // Register the command -- The command and the command title are kept together
     CommandManager.register("Flame Thrower", MY_COMMANDID, throwFlames);
     // Add a new menu before the help menu.  
