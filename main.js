@@ -34,6 +34,7 @@ define(function (require, exports, module) {
         ExtensionUtils              = brackets.getModule("utils/ExtensionUtils"),
         Strings                     = brackets.getModule("strings"),
         StringUtils                 = brackets.getModule("utils/StringUtils"),
+        KeyEvent                    = brackets.getModule("utils/KeyEvent"),
         Menus                       = brackets.getModule("command/Menus");
 
     var KeyboardPrefs               = JSON.parse(require("text!keyboard.json"));
@@ -321,6 +322,14 @@ define(function (require, exports, module) {
         return printableChars[_getRandomInt(0, printableChars.length)];
     }
 
+    function simulateKeyEvent(charCode) {
+        var evt = window.document.createEvent("KeyboardEvent");
+        (evt.initKeyEvent || evt.initKeyboardEvent)("keypress", true, true, window,
+                        0, 0, 0, 0,
+                        0, charCode);
+        window.document.activeElement.dispatchEvent(evt);
+    }
+
     function pumpKeystrokes(count, randomizeEnterKey) {
         var i = 0,
             result = $.Deferred();
@@ -353,7 +362,14 @@ define(function (require, exports, module) {
     }
 
     function startTyping(randomizeEnterKey) {
-        return pumpKeystrokes(_getRandomInt(0, KEY_FAB_COUNTER), randomizeEnterKey);
+        if (brackets.platform === "mac") {
+            return pumpKeystrokes(_getRandomInt(0, KEY_FAB_COUNTER), randomizeEnterKey);
+        } else {
+            console.log("Simulate injectingKeys...");
+            // close whatever box was up if any
+            simulateKeyEvent(KeyEvent.VK_ESCAPE);
+            return (new $.Deferred()).resolve().promise();
+        }
     }
 
     function execCommandAndStartTyping(commandId, randomizeEnterKey) {
