@@ -373,7 +373,7 @@ define(function (require, exports, module) {
                 } else {
                     return result.resolve();
                 }
-            }, 5000);
+            }, 10000);
             return result;
         }
     }
