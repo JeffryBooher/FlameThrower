@@ -421,7 +421,7 @@ define(function (require, exports, module) {
         };
 
         while (true) {
-            operations[_getRandomInt(0, operations.length)].call.apply().fail(bail());
+            operations[_getRandomInt(0, operations.length - 1)].call.apply().fail(bail());
         }
 
 
