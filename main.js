@@ -363,16 +363,18 @@ define(function (require, exports, module) {
         if (brackets.platform === "mac") {
             return pumpKeystrokes(_getRandomInt(0, KEY_FAB_COUNTER), randomizeEnterKey);
         } else {
+            var result = new $.Deferred();
             console.log("Simulate injectingKeys...");
             setTimeout(function () {
                 // close whatever box was up if any
                 simulateKeyEvent(KeyEvent.VK_ESCAPE);
                 if (!_okToRun) {
-                    return (new $.Deferred()).reject().promise();
+                    return result.reject();
                 } else {
-                    return (new $.Deferred()).resolve().promise();
+                    return result.resolve();
                 }
             }, PAINT_CYCLE_MS);
+            return result;
         }
     }
 
