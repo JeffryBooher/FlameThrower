@@ -412,7 +412,7 @@ define(function (require, exports, module) {
         return startTyping(true);
     }
 
-    function doSpray() {
+    function doSprayKeys() {
         var result = new $.Deferred(),
             operations = [doQuickOpen, doFindInFiles, doTypeInDocument];
 
@@ -434,7 +434,10 @@ define(function (require, exports, module) {
 
         doNewDocument()
             .done(function () {
-
+                doSprayKeys()
+                    .always(function () {
+                        result.reject();
+                    });
             })
             .fail(function () {
                 result.reject();
