@@ -189,7 +189,7 @@ define(function (require, exports, module) {
             kVK_ANSI_X,
             kVK_ANSI_Y,
             kVK_ANSI_Z
-    ];
+        ];
     
     var vkNumeric = [
             kVK_ANSI_1,
@@ -212,7 +212,7 @@ define(function (require, exports, module) {
             kVK_ANSI_Keypad7,
             kVK_ANSI_Keypad8,
             kVK_ANSI_Keypad9
-    ];
+        ];
     
     var vkSymbol = [
             kVK_ANSI_Equal,
@@ -233,7 +233,7 @@ define(function (require, exports, module) {
             kVK_ANSI_KeypadDivide,
             kVK_ANSI_KeypadMinus,
             kVK_ANSI_KeypadEquals
-    ];
+        ];
     
     var vkControl = [
             kVK_Return,
@@ -243,7 +243,7 @@ define(function (require, exports, module) {
             kVK_Delete,
             kVK_ForwardDelete,
             kVK_Escape
-    ];
+        ];
     
     var vkShift = [
             kVK_Command,
@@ -255,14 +255,14 @@ define(function (require, exports, module) {
             kVK_RightOption,
             kVK_RightControl,
             kVK_Function
-    ];
+        ];
     
     var vkSpecial = [
             kVK_VolumeUp,
             kVK_VolumeDown,
             kVK_Mute,
             kVK_Help
-    ];
+        ];
     
     var vkFunction = [
             kVK_F1,
@@ -285,7 +285,7 @@ define(function (require, exports, module) {
             kVK_F18,
             kVK_F19,
             kVK_F20
-    ];
+        ];
     
     var vkNavigation = [
             kVK_Home,
@@ -296,7 +296,7 @@ define(function (require, exports, module) {
             kVK_RightArrow,
             kVK_DownArrow,
             kVK_UpArrow
-    ];
+        ];
     
     var alphaChars = vkAlpha.concat(vkNumeric);
     var printableChars = alphaChars.concat(vkSymbol);
@@ -311,13 +311,22 @@ define(function (require, exports, module) {
     
     function pumpKeystrokes(count) {
         var i;
-        for (i = 0; i < count; i++) {
+
+        var pumpNext = function () {
             brackets.app.postNativeKeyEvent(_getRandomCharacter());
+        };
+
+        var typeOneChar = function () {
+            setTimeout(pumpNext, 100);
+        };
+
+        for (i = 0; i < count; i++) {
+            typeOneChar();
         }
     }
     
     function startTyping() {
-        pumpKeystrokes(1);
+        pumpKeystrokes(10000);
     }
     
     function throwFlames() {
