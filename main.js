@@ -319,13 +319,7 @@ define(function (require, exports, module) {
     }
 
     function _getRandomCharacter() {
-        return printableChars[_getRandomInt(0, printableChars.length)];
-    }
-
-    function simulateKeyEvent(charCode) {
-        var evt = window.document.createEvent("KeyboardEvent");
-        evt.initKeyboardEvent("keypress", true, true, window, 0, 0, 0, 0, 0, charCode);
-        window.document.activeElement.dispatchEvent(evt);
+        return printableChars[_getRandomInt(0, printableChars.length - 1)];
     }
 
     function pumpKeystrokes(count, randomizeEnterKey) {
@@ -363,18 +357,7 @@ define(function (require, exports, module) {
         if (brackets.platform === "mac") {
             return pumpKeystrokes(_getRandomInt(0, maxKeys || KEY_FAB_COUNTER), randomizeEnterKey);
         } else {
-            var result = new $.Deferred();
-            console.log("Simulate injectingKeys...");
-            setTimeout(function () {
-                // close whatever box was up if any
-                simulateKeyEvent(KeyEvent.VK_ESCAPE);
-                if (!_okToRun) {
-                    return result.reject();
-                } else {
-                    return result.resolve();
-                }
-            }, 20000);
-            return result;
+            return (new $.Deferred()).reject().promise();
         }
     }
 
