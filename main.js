@@ -302,7 +302,10 @@ define(function (require, exports, module) {
     var printableChars = alphaChars.concat(vkSymbol);
 
     /** @const {int} Timeout value so browser can repaint */
-    var PAINT_CYCLE_MS = 1000;
+    var DOC_CYCLE_MS = 1000;
+
+    /** @const {int} Timeout value so browser can repaint */
+    var PAINT_CYCLE_MS = 5000;
 
     /** @const {int} number of keys to try */
     var KEY_FAB_COUNTER = 10;
@@ -339,7 +342,7 @@ define(function (require, exports, module) {
         // creaet a document
         // start pushing chars
         CommandManager.execute(Commands.FILE_NEW_UNTITLED);
-        setTimeout(startTyping, PAINT_CYCLE_MS);
+        setTimeout(startTyping, DOC_CYCLE_MS);
     }
 
 
