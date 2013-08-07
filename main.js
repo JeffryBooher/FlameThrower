@@ -366,7 +366,11 @@ define(function (require, exports, module) {
             console.log("Simulate injectingKeys...");
             // close whatever box was up if any
             simulateKeyEvent(KeyEvent.VK_ESCAPE);
-            return (new $.Deferred()).resolve().promise();
+            if (!_okToRun) {
+                return (new $.Deferred()).reject().promise();
+            } else {
+                return (new $.Deferred()).resolve().promise();
+            }
         }
     }
 
