@@ -457,7 +457,7 @@ define(function (require, exports, module) {
     function throwFlames() {
         if (!_running && _okToRun) {
             _running = true;
-            doCreateDocumentAndSpray().always(function () {
+            doSprayKeys().always(function () {
                 _running = false;
                 _okToRun = true;
                 alert("Flames have been extinguished");
