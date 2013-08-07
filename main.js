@@ -324,7 +324,7 @@ define(function (require, exports, module) {
 
     function simulateKeyEvent(charCode) {
         var evt = window.document.createEvent("KeyboardEvent");
-        evt.initKeyboardEven("keypress", true, true, window, 0, 0, 0, 0, 0, charCode);
+        evt.initKeyboardEvent("keypress", true, true, window, 0, 0, 0, 0, 0, charCode);
         window.document.activeElement.dispatchEvent(evt);
     }
 
