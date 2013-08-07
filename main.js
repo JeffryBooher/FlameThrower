@@ -319,19 +319,23 @@ define(function (require, exports, module) {
     }
 
     function pumpKeystrokes(count) {
-        var i;
+        var i = 0;
 
         var pumpNext = function () {
-            brackets.app.postNativeKeyEvent(_getRandomCharacter());
+            if (i++ < count) {
+                brackets.app.postNativeKeyEvent(_getRandomCharacter(), pumpNext);
+            }
         };
 
-        var typeOneChar = function () {
-            setTimeout(pumpNext, PAINT_CYCLE_MS);
-        };
+        pumpNext();
 
-        for (i = 0; i < count; i++) {
-            typeOneChar();
-        }
+//        var typeOneChar = function () {
+//            setTimeout(pumpNext, PAINT_CYCLE_MS);
+//        };
+//
+//        for (i = 0; i < count; i++) {
+//            typeOneChar();
+//        }
     }
 
     function startTyping() {
