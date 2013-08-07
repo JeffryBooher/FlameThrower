@@ -36,9 +36,12 @@ define(function (require, exports, module) {
         StringUtils                 = brackets.getModule("utils/StringUtils"),
         Menus                       = brackets.getModule("command/Menus");
 
+    var KeyboardPrefs               = JSON.parse(require("text!keyboard.json"));
+
 
     /** @const {string} Extension Command ID */
-    var MY_COMMANDID                = "flame.throw";
+    var START_COMMANDID             = "flame.throw";
+    var STOP_COMMANDID              = "flame.stop";
     var MY_MENUID                   = "flame-menu";
 
     /* Our extension's preferences */
@@ -301,6 +304,9 @@ define(function (require, exports, module) {
     var alphaChars = vkAlpha.concat(vkNumeric);
     var printableChars = alphaChars.concat(vkSymbol);
 
+    var _running = false,
+        _okToRun = true;
+
     /** @const {int} Timeout value so browser can repaint */
     var PAINT_CYCLE_MS = 1000;
 
@@ -312,7 +318,7 @@ define(function (require, exports, module) {
     }
 
     function _getRandomCharacter() {
-        return alphaChars[_getRandomInt(0, alphaChars.length)];
+        return printableChars[_getRandomInt(0, printableChars.length)];
     }
 
     function pumpKeystrokes(count, randomizeEnterKey) {
@@ -320,21 +326,25 @@ define(function (require, exports, module) {
             result = $.Deferred();
 
         var pumpNext = function () {
-            try {
-                if (i++ < count) {
-                    if (randomizeEnterKey && (_getRandomInt(0, 9) % 2 > 0)) {
-                        brackets.app.postNativeKeyEvent(kVK_Return, pumpNext);
-                    } else {
-                        brackets.app.postNativeKeyEvent(_getRandomCharacter(), pumpNext);
-                    }
-                } else {
-                    // if we're done hit escape to close a modal input if open
-                    brackets.app.postNativeKeyEvent(kVK_Escape, function () {
-                        result.resolve();
-                    });
-                }
-            } catch (e) {
+            if (!_okToRun) {
                 result.reject();
+            } else {
+                try {
+                    if (i++ < count) {
+                        if (randomizeEnterKey && (_getRandomInt(0, 9) === 7)) {
+                            brackets.app.postNativeKeyEvent(kVK_Return, pumpNext);
+                        } else {
+                            brackets.app.postNativeKeyEvent(_getRandomCharacter(), pumpNext);
+                        }
+                    } else {
+                        // if we're done hit escape to close a modal input if open
+                        brackets.app.postNativeKeyEvent(kVK_Escape, function () {
+                            result.resolve();
+                        });
+                    }
+                } catch (e) {
+                    result.reject();
+                }
             }
         };
 
@@ -371,9 +381,6 @@ define(function (require, exports, module) {
         return result;
     }
 
-    function doNewDocument() {
-        return execCommandAndStartTyping(Commands.FILE_NEW_UNTITLED, true);
-    }
 
     function doQuickOpen() {
         return execCommandAndStartTyping(Commands.NAVIGATE_QUICK_OPEN);
@@ -383,18 +390,69 @@ define(function (require, exports, module) {
         return execCommandAndStartTyping(Commands.EDIT_FIND_IN_FILES);
     }
 
+    function doNewDocument() {
+        return execCommandAndStartTyping(Commands.FILE_NEW_UNTITLED, true);
+    }
+
+    function doTypeInDocument() {
+        return startTyping(true);
+    }
+
+    function doSpray() {
+        var result = new $.Deferred(),
+            operations = [doQuickOpen, doFindInFiles, doTypeInDocument];
+
+        var bail = function () {
+            result.reject();
+        };
+
+        while (true) {
+            operations[_getRandomInt(0, operations.length)].call.apply().fail(bail());
+        }
+
+
+        return result;
+
+    }
+
+    function doCreateDocumentAndSpray() {
+        var result = new $.Deferred();
+
+        doNewDocument()
+            .done(function () {
+
+            })
+            .fail(function () {
+                result.reject();
+            });
+
+        return result;
+    }
+
     function throwFlames() {
-        doNewDocument().done(function () {
-            // TODO: figure out what to do next...
+        _running = true;
+        _okToRun = false;
+        doCreateDocumentAndSpray().always(function () {
+            _running = false;
+            _okToRun = true;
+            alert("Flames have been extinguished");
         });
+    }
+
+    function extinguishFlames() {
+        if (_running) {
+            _okToRun = false;
+        }
     }
 
 
     // Register the command -- The command and the command title are kept together
-    CommandManager.register("Flame Thrower", MY_COMMANDID, throwFlames);
+    CommandManager.register("Start Flame Thrower", START_COMMANDID, throwFlames);
+    CommandManager.register("Stop Flame Thrower", STOP_COMMANDID, extinguishFlames);
     // Add a new menu before the help menu.
     //  if you want to modify an existing menu you would use Menus.getMenu -- e.g. Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
     var menu = Menus.addMenu("Flame", MY_MENUID, Menus.BEFORE, Menus.AppMenuBar.HELP_MENU);
     // Now add the menu item to invoke it.  Add a keyboard shortcut as well.
-    menu.addMenuItem(MY_COMMANDID);
+    menu.addMenuItem(START_COMMANDID);
+    menu.addMenuItem(STOP_COMMANDID, KeyboardPrefs.stopThrowingFlames);
 });
