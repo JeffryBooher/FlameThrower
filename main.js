@@ -301,7 +301,11 @@ define(function (require, exports, module) {
     var alphaChars = vkAlpha.concat(vkNumeric);
     var printableChars = alphaChars.concat(vkSymbol);
 
+    /** @const {int} Timeout value so browser can repaint */
     var PAINT_CYCLE_MS = 1000;
+
+    /** @const {int} number of keys to try */
+    var KEY_FAB_COUNTER = 10;
 
     function _getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -328,7 +332,7 @@ define(function (require, exports, module) {
     }
 
     function startTyping() {
-        pumpKeystrokes(10000);
+        pumpKeystrokes(KEY_FAB_COUNTER);
     }
 
     function throwFlames() {
