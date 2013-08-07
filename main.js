@@ -302,13 +302,10 @@ define(function (require, exports, module) {
     var printableChars = alphaChars.concat(vkSymbol);
 
     /** @const {int} Timeout value so browser can repaint */
-    var DOC_CYCLE_MS = 1000;
-
-    /** @const {int} Timeout value so browser can repaint */
-    var PAINT_CYCLE_MS = 5000;
+    var PAINT_CYCLE_MS = 1000;
 
     /** @const {int} number of keys to try */
-    var KEY_FAB_COUNTER = 10000;
+    var KEY_FAB_COUNTER = 1000;
 
     function _getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -318,27 +315,78 @@ define(function (require, exports, module) {
         return alphaChars[_getRandomInt(0, alphaChars.length)];
     }
 
-    function pumpKeystrokes(count) {
-        var i = 0;
+    function pumpKeystrokes(count, randomizeEnterKey) {
+        var i = 0,
+            result = $.Deferred();
 
         var pumpNext = function () {
-            if (i++ < count) {
-                brackets.app.postNativeKeyEvent(_getRandomCharacter(), pumpNext);
+            try {
+                if (i++ < count) {
+                    if (randomizeEnterKey && (_getRandomInt(9) % 2 > 0)) {
+                        brackets.app.postNativeKeyEvent(kVK_Return, pumpNext);
+                    } else {
+                        brackets.app.postNativeKeyEvent(_getRandomCharacter(), pumpNext);
+                    }
+                } else {
+                    // if we're done hit escape to close a modal input if open
+                    brackets.app.postNativeKeyEvent(kVK_Escape, function () {
+                        result.resolve();
+                    });
+                }
+            } catch (e) {
+                result.reject();
             }
         };
 
         pumpNext();
+        return result;
     }
 
-    function startTyping() {
-        pumpKeystrokes(KEY_FAB_COUNTER);
+    function startTyping(randomizeEnterKey) {
+        return pumpKeystrokes(_getRandomInt(0, KEY_FAB_COUNTER), randomizeEnterKey);
+    }
+
+    function execCommandAndStartTyping(commandId, randomizeEnterKey) {
+        // create a document and start typing
+        var result = new $.Deferred();
+
+        var handleCreate = function () {
+            startTyping(randomizeEnterKey)
+                .done(function () {
+                    result.resolve();
+                })
+                .fail(function () {
+                    result.reject();
+                });
+        };
+
+        CommandManager.execute(commandId)
+            .done(function () {
+                setTimeout(handleCreate, PAINT_CYCLE_MS);
+            })
+            .reject(function () {
+                result.reject();
+            });
+
+        return result;
+    }
+
+    function doNewDocument() {
+        return execCommandAndStartTyping(Commands.FILE_NEW_UNTITLED, true);
+    }
+
+    function doQuickOpen() {
+        return execCommandAndStartTyping(Commands.NAVIGATE_QUICK_OPEN);
+    }
+
+    function doFindInFiles() {
+        return execCommandAndStartTyping(Commands.EDIT_FIND_IN_FILES);
     }
 
     function throwFlames() {
-        // creaet a document
-        // start pushing chars
-        CommandManager.execute(Commands.FILE_NEW_UNTITLED);
-        setTimeout(startTyping, DOC_CYCLE_MS);
+        doNewDocument().done(function () {
+            // TODO: figure out what to do next...
+        });
     }
 
 
