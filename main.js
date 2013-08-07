@@ -422,7 +422,7 @@ define(function (require, exports, module) {
 
     function doSprayKeys() {
         var result = new $.Deferred(),
-            operations = [doQuickOpen, doFindInFiles, doTypeInDocument];
+            operations = [doQuickOpen, doFindInFiles]; //, doTypeInDocument];
 
         var bail = function () {
             result.reject();
