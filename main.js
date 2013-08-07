@@ -317,16 +317,14 @@ define(function (require, exports, module) {
     }
     
     function startTyping() {
-        pumpKeystrokes(10000);
+        pumpKeystrokes(1);
     }
     
     function throwFlames() {
         // creaet a document
         // start pushing chars
         CommandManager.execute(Commands.FILE_NEW_UNTITLED);
-
-        setTimeout(startTyping, 1000);
-        
+        setTimeout(startTyping, 10000);
     }
                     
     
