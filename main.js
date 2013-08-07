@@ -422,7 +422,7 @@ define(function (require, exports, module) {
 
     function doSprayKeys() {
         var result = new $.Deferred(),
-            operations = [doQuickOpen, doFindInFiles]; //, doTypeInDocument];
+            operations = [doQuickOpen, doFindInFiles, doTypeInDocument];
 
 
         var pumpNext = function () {
@@ -463,7 +463,7 @@ define(function (require, exports, module) {
     function throwFlames() {
         if (!_running && _okToRun) {
             _running = true;
-            doSprayKeys().always(function () {
+            doCreateDocumentAndSpray().always(function () {
                 _running = false;
                 _okToRun = true;
                 alert("Flames have been extinguished");
