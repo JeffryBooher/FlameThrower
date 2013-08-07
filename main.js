@@ -308,7 +308,7 @@ define(function (require, exports, module) {
     var PAINT_CYCLE_MS = 5000;
 
     /** @const {int} number of keys to try */
-    var KEY_FAB_COUNTER = 10;
+    var KEY_FAB_COUNTER = 10000;
 
     function _getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -328,14 +328,6 @@ define(function (require, exports, module) {
         };
 
         pumpNext();
-
-//        var typeOneChar = function () {
-//            setTimeout(pumpNext, PAINT_CYCLE_MS);
-//        };
-//
-//        for (i = 0; i < count; i++) {
-//            typeOneChar();
-//        }
     }
 
     function startTyping() {
