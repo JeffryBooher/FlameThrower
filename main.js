@@ -322,7 +322,7 @@ define(function (require, exports, module) {
         var pumpNext = function () {
             try {
                 if (i++ < count) {
-                    if (randomizeEnterKey && (_getRandomInt(9) % 2 > 0)) {
+                    if (randomizeEnterKey && (_getRandomInt(0, 9) % 2 > 0)) {
                         brackets.app.postNativeKeyEvent(kVK_Return, pumpNext);
                     } else {
                         brackets.app.postNativeKeyEvent(_getRandomCharacter(), pumpNext);
